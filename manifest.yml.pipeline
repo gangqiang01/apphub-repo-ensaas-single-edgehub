@@ -1,0 +1,20 @@
+---  
+applications:   
+- name: AndroidAstore-Server-v1.0.1-cloud
+  hosts:
+  - androidAstore
+  memory: 768M 
+  disk_quota: 1024M 
+  instances: 1
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git 
+  path: ./Astore.jar
+  env:      
+    org_id: 3b4372e4-aefa-4db5-9d2a-91309604a99c
+    org_name: AdvAndroidLink
+    srp_name: androidAstore
+    sso_url: https://portal-sso.arfa.wise-paas.com
+    postgresql_service_name: jxpostgres
+    blobstore_server_name: jxblob
+  services:   
+  - jxpostgres
+  - jxblob

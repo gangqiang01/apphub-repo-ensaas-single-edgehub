@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: astore
+  name: astore
+  namespace: androiddm
+spec:
+  selector:
+    matchLabels:
+      app: astore
+  template:
+    metadata:
+      labels:
+        app: astore
+    spec:
+      containers:
+      - name:  gq-astore
+        image:  docker.io/gangqiang01/astore-ensaas:1.1.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 30001
+          name: http
+          protocol: TCP
+        env:
+        - name: appName
+          value: astore
+        - name: SSO.apiUrl
+          value: http://portal-ensaas.hz.wise-paas.com.cn/v4.0
+        - name: serviceName
+          value: astore
+        - name: ENSAAS_SERVICES
+          valueFrom:
+            secretKeyRef:
+              name: androiddm
+              key: ENSAAS_SERVICES
+        resources:
+          limits:
+            cpu: 0.5     　　
+            memory: 1G
+            ephemeral-storage: 1G
+          requests:
+            cpu: 0.5
+            memory: 1G
+            ephemeral-storage: 1G
+      restartPolicy: Always
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: astore
+  namespace: androiddm
+  labels:
+    app: astore
+spec:
+  ports:
+  - port: 80
+    targetPort: 30001
+  selector:
+    app: astore

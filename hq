@@ -1,0 +1,488 @@
+[33mcommit 564032b68f2e3cbc3ccce9a106e6a1a5075e4264[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu Nov 21 16:18:32 2019 +0800
+
+    fix bug: alert When the app is packaged without a version in appcontrol
+
+[33mcommit 0e89d6dd43d727be1b98802a6cbf70a8cddf7799[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu Nov 21 16:15:02 2019 +0800
+
+    add download deployonApp api
+
+[33mcommit 32d9ceb71a7ecf0643c627da272b5565d40c3767[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Nov 19 17:42:27 2019 +0800
+
+    fix bug: space is not enouch
+
+[33mcommit 418ed08510f0c17e8daf22d8208e9ee74a5cdfe6[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Nov 12 13:46:51 2019 +0800
+
+    add get(package) in repoApp
+
+[33mcommit a22e0c662ba87eed77434a6036c3d36dcb4161ce[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Nov 12 13:38:18 2019 +0800
+
+    modify upload file to s3
+
+[33mcommit 01d760670914798bf18141d8850196252305406a[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Nov 5 16:54:51 2019 +0800
+
+    adapt wisepaas in fileRepo
+
+[33mcommit 9b3d61900af74b912f1710be8ce4a2569d27a8e7[m
+Merge: 898374c c58727b
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Nov 5 16:52:15 2019 +0800
+
+    merge master
+
+[33mcommit c58727be45dfc02bab035b208c51cb99fa601309[m
+Merge: 8c2d4aa 2f7d6af
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Oct 29 09:28:28 2019 +0800
+
+    merge workOrder branch
+
+[33mcommit 8c2d4aa060a9dca5ff4b639aa982b6b8298798ad[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Oct 29 09:09:09 2019 +0800
+
+    modify application.properties
+
+[33mcommit 932079b92543b2488d464982b8db5530323712af[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Oct 29 09:06:58 2019 +0800
+
+    add helper sh
+
+[33mcommit 2f7d6afae07d3c3bcb64c9b50121c05de877ac06[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Oct 29 09:04:29 2019 +0800
+
+    cancel hostname in address of RepoFileController.java
+
+[33mcommit 89c5b9978ae3dfb2e9113e6162ef5cb2bc0aca66[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu Oct 10 16:44:46 2019 +0800
+
+    modify: can upload apk of same pkg and version and not same apk name
+
+[33mcommit 5a719d8e3f521b0a1fe61800ba5b7c92481e030e[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Sep 6 15:43:13 2019 +0800
+
+    fix bug:androidDM not download file from aStore when server IP change
+
+[33mcommit ea85f1eb42640fcf61ef4eb7eed2abf788d2233a[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Sep 2 17:11:14 2019 +0800
+
+    add application.properties
+
+[33mcommit 40245aa62575f13b1e2f16302069a930cf585857[m
+Merge: 5ba4566 4586fc8
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Sep 2 17:09:51 2019 +0800
+
+    Merge branch 'workOrder' of http://advgitlab.eastasia.cloudapp.azure.com/edgesrp/Astore-Backend into workOrder
+
+[33mcommit 5ba45669adc378d5d5b67e587501753140dd1030[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Sep 2 17:09:10 2019 +0800
+
+    add filerepo part
+
+[33mcommit e6b101abfb5f36b62cdc4a97a3fcc4b939103b4f[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu Aug 22 15:19:04 2019 +0800
+
+    gix bug: not search downline
+
+[33mcommit 4586fc868520d29de0f57447147b01012750f2bd[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Aug 20 18:01:00 2019 +0800
+
+    add fileRepo func
+
+[33mcommit 93628a1d7c0e605c2429f97d097f81feac18600f[m
+Merge: 90f944b 7dfcef4
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Aug 12 10:47:22 2019 +0800
+
+    Merge branch 'master' of http://advgitlab.eastasia.cloudapp.azure.com/edgesrp/Astore-Backend
+
+[33mcommit 90f944b3f68cc503e509008ac82b2ea0be24ec46[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Aug 12 10:46:22 2019 +0800
+
+    modify app and bsp get api default limit from 10 to 50
+
+[33mcommit 898374c42eabb89dcd4fea084d7e9739d46e687a[m
+Merge: f221513 5f9836c
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Aug 6 11:44:44 2019 +0800
+
+    Merge branch 'wp-cloud' of http://advgitlab.eastasia.cloudapp.azure.com/edgesrp/Astore-Backend into wp-cloud
+
+[33mcommit f221513b934c4aae168f633be3f6301c2bdf3f66[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Aug 6 11:42:10 2019 +0800
+
+    add show app icon api and modify blob config
+
+[33mcommit 17896b89a9a7aefd901d9136594874a0cc2b3c1f[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Aug 6 11:26:43 2019 +0800
+
+    modify login font in login.vue
+
+[33mcommit 5f9836c1a0075c1e8f408bc16bdd2ce41e83e942[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Mon Aug 5 10:29:08 2019 +0800
+
+    get srp_name from env
+
+[33mcommit c0da63b4dfee6860ad40998b5d911924d728d637[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Fri Aug 2 17:26:43 2019 +0800
+
+    update webpages
+
+[33mcommit 6fe5a6d449eb953f54d018c6bec98ee4f6adf2a5[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Fri Aug 2 14:23:00 2019 +0800
+
+    modify manifest file
+
+[33mcommit 208240e5ba14e67bb9475cc455bdf207bc8c9652[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Fri Aug 2 11:29:29 2019 +0800
+
+    add manifest file
+
+[33mcommit df3955dc96ee6e835128a9ac2a07743bbcbfbd05[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Thu Aug 1 17:49:15 2019 +0800
+
+    modify manifest file
+
+[33mcommit 8c13cd66ca542d8f9988a89aacb5d91c3ff8e5b3[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Thu Aug 1 17:18:23 2019 +0800
+
+    modify manifest file for cf
+
+[33mcommit 7dfcef446d8814d226571a3e23f4d2e4790815a6[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Thu Aug 1 10:43:48 2019 +0800
+
+    skip Front web page
+
+[33mcommit 01084f8ccad0276942536f8457a7b27a5ea8398f[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Jul 29 16:13:10 2019 +0800
+
+    add comment to HttpUtil.java
+
+[33mcommit a89b281181db9ed30236efcbc4f5231389056d54[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Jul 19 09:28:04 2019 +0800
+
+    change ssoUrl to get from env
+
+[33mcommit a735741d4425d246270559be1db835ee1c2b3799[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Wed Jul 10 10:26:41 2019 +0800
+
+    fix bug: modify login.vue
+
+[33mcommit ba4da8aa5dd22b048a9f3576fc8ccbc645955d56[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Jul 9 16:56:02 2019 +0800
+
+    mdoify CORSFilter verify
+
+[33mcommit f01c862102cef238957b883e09acfecb75c4ebf8[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Jul 9 15:57:40 2019 +0800
+
+    connect wispaas db and blob,get wispaas env
+
+[33mcommit ee84e6e52d79a46497746e8ea6046d8094a20766[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Jul 5 15:47:59 2019 +0800
+
+    modify user entity tablenamen of db  to aimuser
+
+[33mcommit 9666bbfdc330ddd0dbe6c42c3eca949e45be3234[m
+Merge: d5d7e95 976ddfb
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Wed Jul 3 16:23:42 2019 +0800
+
+    git pull before git push
+
+[33mcommit d5d7e95724839393bfad21be98f63f7caa7c1ff3[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Wed Jul 3 16:16:45 2019 +0800
+
+    add https api pass verify, change restTemplate to httpconnect
+
+[33mcommit 4d6419bb08f7fda751d5561a730e0d2f09e1d44e[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Jun 28 18:32:01 2019 +0800
+
+    add repo dir in initDB
+
+[33mcommit c17ff64d25e0c1ed9c074e6d0804242671ddf3a8[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu Jun 27 15:49:27 2019 +0800
+
+    add wispaas login
+
+[33mcommit 138cf0200b86d6a16d0d9ff06bb06da182990d20[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu Jun 27 15:34:07 2019 +0800
+
+    add insert repo to db in run application
+
+[33mcommit 976ddfb7261660c25e18b83d6e3571ee0f979537[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Jun 21 16:09:53 2019 +0800
+
+    merge wispaas sso
+
+[33mcommit 7d8c3fd03ec2b78f7390655e2214110c74f95696[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Jun 10 17:30:38 2019 +0800
+
+    modify: get versionname and boardname by parameter change to read build.prop
+
+[33mcommit f8a36674a4c23978fa28d2aea5001d52c606cd61[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Jun 10 11:17:58 2019 +0800
+
+    modify uploadbsp errormsg to The file cannot empty
+
+[33mcommit b4e4df6f3f2f26ff09ea8f9d856f7cd26b3a0a81[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu Jun 6 11:42:47 2019 +0800
+
+    modify error log and error return
+
+[33mcommit bd28fe1e2a9b0c9bcc27a7856f735ac24b4de083[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Wed Jun 5 10:23:30 2019 +0800
+
+    modify alert font and capitalize the first letter
+
+[33mcommit a8b47d68c34b30e5f616487dba3bf429d7f99ad5[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Wed Jun 5 09:31:04 2019 +0800
+
+    add checkURL update related file before registe bsp info
+
+[33mcommit cc14579364db5f223ccda6453cff649a46d28012[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Jun 4 09:52:24 2019 +0800
+
+    add return when service.get() is null
+
+[33mcommit d2de886c2412cac2baa953d5a8d9a8282b6239d7[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Thu May 16 15:11:28 2019 +0800
+
+    if the repo is empty before deleting it
+
+[33mcommit daf499f291243ea99c872310ef83761bbf76ff7a[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue May 14 14:02:53 2019 +0800
+
+    modify logback file name
+
+[33mcommit 78fde0406c7407d4621c7b2772a390ee452b27c1[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue May 14 14:02:06 2019 +0800
+
+    add pagination func
+
+[33mcommit 934dc92b8889124a1ec1301a78f41278ced246a9[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri May 10 17:09:33 2019 +0800
+
+    1:add downloadport to application.properties,2:add save apk icon png,3:add downloadUrl
+
+[33mcommit f1fc58b62c63af77ee0270b5367f0ea75242572d[m
+Merge: a2ca32d d22dbdb
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue May 7 13:48:04 2019 +0800
+
+    Merge branch 'master' of http://advgitlab.eastasia.cloudapp.azure.com/edgesrp/Astore-Backend
+
+[33mcommit a2ca32d1cd4a15d1620dbe00bd6dcd6089141768[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue May 7 13:47:24 2019 +0800
+
+    insert only one version apk and bsp to db
+
+[33mcommit d22dbdbb850805df0a11fb8c4e3abd39de079dbf[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Mon May 6 13:40:09 2019 +0800
+
+    modify table name of user
+
+[33mcommit 6855479fda68fa2852d3eeb464df86a6d6f3ab02[m
+Merge: 06bb0bb c5d42fd
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon May 6 11:35:20 2019 +0800
+
+    Merge branch 'master' of http://advgitlab.eastasia.cloudapp.azure.com/edgesrp/Astore-Backend
+
+[33mcommit 06bb0bb88b0ffbf284a7cc6dd3a850f1dcb09a72[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon May 6 11:34:36 2019 +0800
+
+    solve: upload bsppackage get server ip 127.0.0.1
+
+[33mcommit c5d42fdd38dded322dfc9193746f592baeeb8121[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Mon May 6 11:10:57 2019 +0800
+
+    modify some msg info
+
+[33mcommit 9ae9b75f0ab282e7a493977090d12f27b30ac587[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Sun May 5 17:29:50 2019 +0800
+
+    rename IBean to IRepository
+
+[33mcommit 69a9ad10e4076173cf3c30c711f1e956c0b92451[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Sun May 5 17:12:35 2019 +0800
+
+    solve:init db only key when running app
+
+[33mcommit af97f1a62436e78378a49f1d68bb4ceeda4d33e4[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Sun May 5 15:33:45 2019 +0800
+
+    resolve:delete all files when delete repo
+
+[33mcommit 469e4724ceb3c6d328d9a7f495e17c321629b047[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Apr 30 17:31:12 2019 +0800
+
+    modify store html static dir to aStore
+
+[33mcommit 865dee2b4082838a8ca62877685dba33d4fe0e00[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Apr 30 15:34:35 2019 +0800
+
+    cancel uname equal username in filter.java
+
+[33mcommit c494d07c25436435f0602a96f4fed69dd89a0203[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Apr 30 10:01:08 2019 +0800
+
+    modify spring-max-file-size 2000MB to 1000MB
+
+[33mcommit b7815cf25c0b5222b4df2057fcca831b3284021c[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Apr 29 17:12:38 2019 +0800
+
+    solve session setcookie name duplicate
+
+[33mcommit 484f515ba62572d4eef40997237ba10f20c13ece[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Apr 29 15:16:53 2019 +0800
+
+    change upload bspfile to multifyfile transfer to
+
+[33mcommit 5c3bbbd0060dc9d271fe5bbed455c3ee8cb452f5[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Apr 29 14:19:34 2019 +0800
+
+    mdoify code structure
+
+[33mcommit 0562567cbd6aeb08d9387a7c40241f34b496424f[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Apr 26 18:14:32 2019 +0800
+
+    modify api value
+
+[33mcommit 09b87c208cb26cdaf93046a25bd8552d5158f076[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Apr 22 11:26:18 2019 +0800
+
+    modify jwt and add file lock
+
+[33mcommit ea7cd04c800fd27cda415e526cc6f5fd453fa8eb[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Apr 16 11:41:07 2019 +0800
+
+    add logger config file
+
+[33mcommit 2a45b03900c8802d45a5e2227aa3913d2bccf628[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Apr 15 14:37:17 2019 +0800
+
+    modify md5 is notify
+
+[33mcommit b3c2c1c62454dcaa57ee6243e0137dd73faaffa9[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Mon Apr 15 13:20:50 2019 +0800
+
+    add batch delete
+
+[33mcommit aec02dc8e2ea7b639453949c950208421b3c2900[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Apr 12 14:50:59 2019 +0800
+
+    add upload bsp build.prop
+
+[33mcommit ddf8e568231ce04ca5ced815f205954f67089501[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Tue Apr 2 14:02:20 2019 +0800
+
+    init ab admin
+
+[33mcommit d158df09d377dfa03582b5103096f4a87658a335[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Mar 29 17:35:03 2019 +0800
+
+    add md5 file
+
+[33mcommit d0a1c1eaaafeda48c7271d4483292ad2f60b6db4[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Mar 29 14:52:43 2019 +0800
+
+    add readme.md
+
+[33mcommit 86bdfb6efa0fab6d155ef2c3d9479a4c6172e0ca[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Mar 29 14:46:58 2019 +0800
+
+    add repotype and init db in application run
+
+[33mcommit 12ef21dce5973ba51087d2dad0d9b2f48eb86440[m
+Merge: fa7a83f e5f58a2
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Mar 29 10:08:55 2019 +0800
+
+    Merge branch 'master' of http://advgitlab.eastasia.cloudapp.azure.com/edgesrp/Astore-Backend
+
+[33mcommit e5f58a23d4e64e92c282fb45dc1bd686b7fe9b50[m
+Author: root <jin.xin@advantech.com.cn>
+Date:   Fri Mar 29 10:01:28 2019 +0800
+
+    add README
+
+[33mcommit fa7a83f3597bd9295704b6a152edf49fc2ad7d9a[m
+Author: gangqiang.sun <gangqiang.sun@advantech.com.cn>
+Date:   Fri Mar 29 09:22:57 2019 +0800
+
+    first commit

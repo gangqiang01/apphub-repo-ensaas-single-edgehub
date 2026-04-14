@@ -1,0 +1,18 @@
+package com.m2m.management.utils;
+
+public enum SyncErrorCode {
+    NOERROR,
+    DIRERROR,
+    FILEEXIST,
+    DOENLOADERROR,
+    URLFORMATERROR,
+    URLNOTSUPPORT,
+    CLOUDURLERROR,
+    CLOUDURLEMPTY,
+    DBERROR,
+    PARSEFILE,
+    TIMEOUT,
+    DBEXIST,
+    UPLOADERROR,
+    LICENSEERROR,
+}

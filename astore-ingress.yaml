@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: astore
+spec:
+  rules:
+  - host: astore.androiddm.eks001.en.internal
+    http:
+      paths:
+      - backend:
+          serviceName: astore
+          servicePort: 80
