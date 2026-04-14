@@ -88,6 +88,7 @@ public class CORSFilter implements Filter {
             }
             String tname = tokenUserJSONObject.getString("username");
             if (tname == null) {
+                log.error("token verify failed: token user= "+tokenUser);
                 return false;
             }
         }catch(Exception e){
