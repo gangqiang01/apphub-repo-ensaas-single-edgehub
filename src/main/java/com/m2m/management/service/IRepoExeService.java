@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface IRepoExeService {
 
-    List<RepoExe> getAllByPage(String keywords, int currentPage, int limit, Storage storage);
-    List<RepoExe> getAllByTypeAndPage(String type, String keywords, int currentPage, int limit, Storage storage);
+    List<RepoExe> getAllByPage(String keywords, int currentPage, int limit, Storage storage, String tenantId);
+    List<RepoExe> getAllByTypeAndPage(String type, String keywords, int currentPage, int limit, Storage storage, String tenantId);
     List<RepoExe> getAll();
     List<RepoExe> getAll(Storage storage);
     List<RepoExe> getByType(String type);
@@ -43,4 +43,6 @@ public interface IRepoExeService {
     boolean deleteRepoExe(String versionPath, String projectPath, String apkPath);
     boolean uploadWithBlock(String name, String md5, Long size, Integer chunks, Integer chunk, MultipartFile file);
     boolean deleteAll();
+    boolean deleteRepoExeByOrg(String org);
+    List<RepoExe>  getAllByOrg(String org);
 }

@@ -130,6 +130,7 @@ public class RepoExeController {
     @RequestMapping(value = "/repoexe/byPage", method = RequestMethod.GET)
     public ResponseEntity<List<RepoExe>> getRepoExe(
             @RequestParam(name="storageId", required = true) int storageId,
+            @RequestParam(name="tenantId", required = true) String tenantId,
             @RequestParam(name = "type", required = false) String type,
             @RequestParam(name="keywords", required = false, defaultValue ="") String keywords,
             @RequestParam(name="currentpage", required = false, defaultValue ="1") int currentpage,
@@ -138,10 +139,10 @@ public class RepoExeController {
         List<RepoExe> repoExe = new ArrayList<>();
         long count = 0;
         if(StringUtils.isEmpty(type)){
-            repoExe = repoExeService.getAllByPage(keywords, currentpage-1, limit, storage);
+            repoExe = repoExeService.getAllByPage(keywords, currentpage-1, limit, storage, tenantId);
             count = repoExeService.count(keywords, storage);
         }else{
-            repoExe = repoExeService.getAllByTypeAndPage(type, keywords,currentpage-1, limit, storage);
+            repoExe = repoExeService.getAllByTypeAndPage(type, keywords,currentpage-1, limit, storage, tenantId);
             count = repoExeService.count(type, keywords, storage);
         }
         if(repoExe == null){
@@ -202,10 +203,29 @@ public class RepoExeController {
             return new ResponseEntity(Response.error("Exe is not found in db"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    @RequestMapping(value = "/repoexe/tenantId/{tenantId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteRepoExeByTenantId(@PathVariable("tenantId") String tenantId){
+        if(repoExeService.deleteRepoExeByOrg(tenantId)){
+            List<RepoExe> repoExes = repoExeService.getAllByOrg(tenantId);
+            if(repoExes != null&& repoExes.size() > 0){
+                for(RepoExe repoExe: repoExes){
+                    String exeSavePath =  repoExe.getAddress().substring(5);
+                    Storage storage = repoExe.getStorage();
+                    S3Client s3Client = S3Client.getInstance(storage);
+                    if(s3Client.isBucketExit()&&s3Client.isObjectExit(exeSavePath)){
+                        s3Client.deleteObject(exeSavePath);
+                    }
+                }
+            }
+            return new ResponseEntity(Response.success(), HttpStatus.OK);
+        }else{
+            return new ResponseEntity(Response.error("App is not found in db"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @RequestMapping(value = "/repoexe/bigFile", method = RequestMethod.POST)
     public ResponseEntity<Void> createRepoExe(
             @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "tenantId", required = true) String tenantId,
             @RequestParam(value="storageId", required = true) int storageId,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "tool", required = false) String tool,
@@ -231,7 +251,7 @@ public class RepoExeController {
                 return new ResponseEntity(Response.error("Exe already exists in db"), HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            String savePath = repoName + pathSeparate + productname.replaceAll(" ", "") + pathSeparate + version + pathSeparate + filename;
+            String savePath = repoName+ pathSeparate+ tenantId + pathSeparate + productname.replaceAll(" ", "") + pathSeparate + version + pathSeparate + filename;
             if (UploadUtils.uploadWithBlock(s3Client, file, savePath, chunk, chunks,md5)) {
                 if (chunk == chunks - 1) {
                     isSave = s3Client.uploadFileMulPartCommit(savePath, md5);
@@ -251,6 +271,7 @@ public class RepoExeController {
                 repoExe.setType(type);
                 repoExe.setSize(size);
                 repoExe.setAddress(downloadAddress);
+                repoExe.setOrg(tenantId);
                 repoExe.setTs(new Date().getTime());
                 repoExe.setStorage(storage);
                 if (repoExeService.add(repoExe)) {

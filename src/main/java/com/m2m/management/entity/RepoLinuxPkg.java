@@ -39,6 +39,13 @@ public class RepoLinuxPkg {
 
     @Column(length = 2048)
     private String tags;
+    private String org;
+    public String getOrg() {
+        return org;
+    }
+    public void setOrg(String org) {
+        this.org = org;
+    }
 
     @ManyToOne
     @JoinColumn(name = "sid")

@@ -12,8 +12,8 @@ import java.util.Collection;
 import java.util.List;
 
 public interface IRepoLinuxPkgRepository extends JpaRepository<RepoLinuxPkg, Long> {
-    List<RepoLinuxPkg> findByStorageAndTypeAndProductnameContaining(Storage storage, String type, String keyword, Pageable pageable);
-    List<RepoLinuxPkg> findByStorageAndProductnameContaining(Storage storage, String keyword, Pageable pageable);
+    List<RepoLinuxPkg> findByStorageAndOrgAndTypeAndProductnameContaining(Storage storage, String org, String type, String keyword, Pageable pageable);
+    List<RepoLinuxPkg> findByStorageAndOrgAndProductnameContaining(Storage storage, String org, String keyword, Pageable pageable);
     List<RepoLinuxPkg> findByType(String type);
     List<RepoLinuxPkg> findByStorage(Storage storage);
     List<RepoLinuxPkg> findByTypeAndStorage(String type, Storage storage);
@@ -32,4 +32,6 @@ public interface IRepoLinuxPkgRepository extends JpaRepository<RepoLinuxPkg, Lon
     List<RepoLinuxPkg> findByTypeIn(Collection types);
     List<RepoLinuxPkg> findByStorageAndTypeIn(Storage storage, Collection types);
     long countByTypeIn(Collection types);
+    void deleteByOrg(String org);
+    List<RepoLinuxPkg> findByOrg(String org);
 }

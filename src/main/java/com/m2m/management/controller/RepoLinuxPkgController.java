@@ -125,15 +125,16 @@ public class RepoLinuxPkgController {
             @RequestParam(name="keywords", required = false, defaultValue ="") String keywords,
             @RequestParam(name="currentpage", required = false, defaultValue ="1") int currentpage,
             @RequestParam(name="limit", required = false, defaultValue ="10") int limit,
+            @RequestParam(name="tenantId", required = true) String tenantId,
             @RequestParam(name = "type", required = false) String type){
         Storage storage = storageService.get(storageId);
         List<RepoLinuxPkg> repoLinuxPkg = new ArrayList<>();
         long count = 0;
         if(StringUtils.isEmpty(type)){
-            repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, currentpage-1, limit, storage);
+            repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, currentpage-1, limit, storage, tenantId);
             count = repoLinuxPkgService.count(keywords, storage);
         }else{
-            repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, type, currentpage-1, limit, storage);
+            repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, type, currentpage-1, limit, storage, tenantId);
             count = repoLinuxPkgService.count(keywords, type, storage);
         }
         if(repoLinuxPkg == null){
@@ -198,6 +199,7 @@ public class RepoLinuxPkgController {
     public ResponseEntity<Void> createRepoLinuxPkg(
             @RequestParam("file") MultipartFile file,
             @RequestParam(name="storageId", required = true) int storageId,
+            @RequestParam(value = "tenantId", required = true) String tenantId,
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "filename") String filename,
             @RequestParam(value = "md5") String md5,
@@ -222,9 +224,7 @@ public class RepoLinuxPkgController {
                 return new ResponseEntity(Response.error("LinuxPkg already exists in db"), HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-
-            String debSavePath = repoName + pathSeparate + productname.replaceAll(" ", "") + pathSeparate + version + pathSeparate + filename;
-
+            String debSavePath = repoName+ pathSeparate+ tenantId + pathSeparate + productname.replaceAll(" ", "") + pathSeparate + version + pathSeparate + filename;
             if(UploadUtils.uploadWithBlock(s3Client, file, debSavePath, chunk, chunks,md5)) {
                 if (chunk == chunks - 1) {
                     isSave = s3Client.uploadFileMulPartCommit(debSavePath, md5);
@@ -243,6 +243,7 @@ public class RepoLinuxPkgController {
                 repoLinuxPkg.setTs(new Date().getTime());
                 repoLinuxPkg.setType(type);
                 repoLinuxPkg.setSize(size);
+                repoLinuxPkg.setOrg(tenantId);
                 repoLinuxPkg.setStorage(storage);
                 if (repoLinuxPkgService.add(repoLinuxPkg)) {
                     repoLinuxPkg = repoLinuxPkgService.get(productname, version, type, storage);

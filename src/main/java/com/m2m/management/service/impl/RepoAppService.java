@@ -38,11 +38,11 @@ public class RepoAppService implements IRepoAppService {
     private IRepoAppsRepository repoAppsRepository;
 
     @Override
-    public List<RepoApp> getAllByPage(String keywords, int currentPage, int limit, Storage storage) {
+    public List<RepoApp> getAllByPage(String keywords, int currentPage, int limit, Storage storage, String tenantId) {
         try{
             keywords = keywords.replaceAll("_", "\\\\_");
             Pageable pageable = new PageRequest(currentPage, limit, Sort.Direction.DESC, "ts");
-            List<RepoApp> repoApps = repoAppsRepository.findByStorageAndFilenameContaining(storage, keywords, pageable);
+            List<RepoApp> repoApps = repoAppsRepository.findByStorageAndOrgAndFilenameContaining(storage, tenantId, keywords, pageable);
             return repoApps;
         }catch(NoSuchElementException e){
             e.printStackTrace();
@@ -57,6 +57,20 @@ public class RepoAppService implements IRepoAppService {
     public List<RepoApp> getAll(Storage storage) {
         try{
             List<RepoApp> repoApps = repoAppsRepository.findByStorage(storage);
+            return repoApps;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return null;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<RepoApp> getAllByOrg(String tenantId) {
+        try{
+            List<RepoApp> repoApps = repoAppsRepository.findByOrg(tenantId);
             return repoApps;
         }catch(NoSuchElementException e){
             e.printStackTrace();
@@ -259,23 +273,18 @@ public class RepoAppService implements IRepoAppService {
     }
 
     @Override
-    public boolean deleteRepoApp(String versionPath, String pkgPath, String apkPath){
-        boolean isDelDir = false;
-        if(FileUtil.isOnlyChildDir(pkgPath)){
-            if(FileUtil.isOnlyChildApk(versionPath)){
-                isDelDir = FileUtil.delDir(pkgPath);
-            }else{
-                isDelDir = FileUtil.delFile(apkPath);
-            }
+    public boolean deleteRepoAppByOrg(String org){
+        try{
 
-        }else{
-            if(FileUtil.isOnlyChildApk(versionPath)){
-                isDelDir = FileUtil.delDir(versionPath);
-            }else{
-                isDelDir = FileUtil.delFile(apkPath);
-            }
+            repoAppsRepository.deleteByOrg(org);
+            return true;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return false;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
         }
-        return isDelDir;
     }
 
     @Override

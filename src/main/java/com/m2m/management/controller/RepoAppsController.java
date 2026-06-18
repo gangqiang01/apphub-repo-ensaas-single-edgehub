@@ -123,11 +123,12 @@ public class RepoAppsController {
     @RequestMapping(value = "/repoapps/byPage", method = RequestMethod.GET)
     public ResponseEntity<List<RepoApp>> getRepoApps(
             @RequestParam(name="storageId", required = true) int storageId,
+            @RequestParam(name="tenantId", required = true) String tenantId,
             @RequestParam(name="keywords", required = false, defaultValue ="") String keywords,
             @RequestParam(name="currentpage", required = false, defaultValue ="1") int currentpage,
             @RequestParam(name="limit", required = false, defaultValue ="10") int limit) {
         Storage storage = storageService.get(storageId);
-        List<RepoApp> repoApps = repoAppsService.getAllByPage(keywords, currentpage-1, limit, storage);
+        List<RepoApp> repoApps = repoAppsService.getAllByPage(keywords, currentpage-1, limit, storage, tenantId);
         long count  = -1;
         count = repoAppsService.count(keywords, storage);
         if(repoApps == null){
@@ -192,10 +193,30 @@ public class RepoAppsController {
             return new ResponseEntity(Response.error("App is not found in db"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @RequestMapping(value = "/repoapps/tenantId/{tenantId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteRepoAppsById(@PathVariable("tenantId") String tenantId){
+        if(repoAppsService.deleteRepoAppByOrg(tenantId)){
+            List<RepoApp> repoApps = repoAppsService.getAllByOrg(tenantId);
+            if(repoApps != null&& repoApps.size() > 0){
+                for(RepoApp app: repoApps){
+                    Storage storage = app.getStorage();
+                    S3Client s3Client = S3Client.getInstance(storage);
+                    String apkSavePath = app.getAddress().substring(5);
+                    if(s3Client.isBucketExit()&&s3Client.isObjectExit(apkSavePath)){
+                        s3Client.deleteObject(apkSavePath);
+                    }
+                }
+            }
+            return new ResponseEntity(Response.success(), HttpStatus.OK);
+        }else{
+            return new ResponseEntity(Response.error("App is not found in db"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @RequestMapping(value = "/repoapps/bigFile", method = RequestMethod.POST)
     public ResponseEntity<Void> createRepoApps(
             @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "tenantId", required = true) String tenantId,
             @RequestParam(name="storageId", required = true) int storageId,
             @RequestParam(value = "filename") String filename,
             @RequestParam(value = "description", required = false) String description,
@@ -215,8 +236,7 @@ public class RepoAppsController {
                 && repoAppsService.get(pkgname, versionname, filename, storage).size() != 0) {
             return new ResponseEntity(Response.error("App already exists in db"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        String apkSavePath = "androidApp" + pathSeparate + pkgname + pathSeparate + versionname + pathSeparate + filename;
-
+        String apkSavePath = "androidApp" + pathSeparate+ tenantId+ pathSeparate + pkgname + pathSeparate + versionname + pathSeparate + filename;
         try {
             S3Client s3Client = S3Client.getInstance(storage);
             if(!s3Client.isBucketExit()){
@@ -241,6 +261,7 @@ public class RepoAppsController {
                         repoApp.setSize(size);
                         repoApp.setAddress(downloadAddress);
                         repoApp.setTs(new Date().getTime());
+                        repoApp.setOrg(tenantId);
                         repoApp.setStorage(storage);
                         if(repoAppsService.add(repoApp)){
                             List<RepoApp> rps = repoAppsService.get(pkgname, versionname, filename, storage);

@@ -8,14 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IRepoLinuxPkgService {
-    List<RepoLinuxPkg> getAllByPage(String keywords, String type, int currentPage, int limit, Storage storage);
+    List<RepoLinuxPkg> getAllByPage(String keywords, String type, int currentPage, int limit, Storage storage, String tenantId);
     List<RepoLinuxPkg>getAll(String type);
     List<RepoLinuxPkg>getAll(String type, Storage storage);
     List<RepoLinuxPkg>getAll();
     List<RepoLinuxPkg>getAll(Storage storage);
     List<RepoLinuxPkg>getAll(List<String> types);
     List<RepoLinuxPkg>getAll(List<String> types, Storage storage);
-    List<RepoLinuxPkg> getAllByPage(String keywords, int currentPage, int limit, Storage storage);
+    List<RepoLinuxPkg> getAllByPage(String keywords, int currentPage, int limit, Storage storage, String tenantId);
     List<RepoLinuxPkg> getInTypesAndPage(List<String> types, String keywords, int cuttentPage, int limit, Storage storage);
 
 
@@ -45,4 +45,6 @@ public interface IRepoLinuxPkgService {
     boolean deleteRepoLinuxPkg(String versionPath, String productPath, String pkgPath);
     boolean uploadWithBlock(String name, String md5, Long size, Integer chunks, Integer chunk, MultipartFile file);
     boolean deleteAll();
+    boolean deleteRepoPkgByOrg(String org);
+    public List<RepoLinuxPkg> getAllByOrg(String tenantId);
 }

@@ -30,11 +30,11 @@ public class RepoLinuxPkgService implements IRepoLinuxPkgService {
     private IRepoLinuxPkgRepository repoLinuxPkgRepository;
 
     @Override
-    public List<RepoLinuxPkg> getAllByPage(String keywords, String type, int currentPage, int limit, Storage storage) {
+    public List<RepoLinuxPkg> getAllByPage(String keywords, String type, int currentPage, int limit, Storage storage, String tenantId) {
         try{
             keywords = keywords.replaceAll("_", "\\\\_");
             Pageable pageable = new PageRequest(currentPage, limit, Sort.Direction.DESC, "ts");
-            List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgRepository.findByStorageAndTypeAndProductnameContaining(storage, type, keywords, pageable);
+            List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgRepository.findByStorageAndOrgAndTypeAndProductnameContaining(storage, tenantId, type, keywords, pageable);
             return repoLinuxPkg;
         }catch(NoSuchElementException e){
             e.printStackTrace();
@@ -130,11 +130,11 @@ public class RepoLinuxPkgService implements IRepoLinuxPkgService {
     }
 
     @Override
-    public List<RepoLinuxPkg> getAllByPage(String keywords, int currentPage, int limit, Storage storage) {
+    public List<RepoLinuxPkg> getAllByPage(String keywords, int currentPage, int limit, Storage storage, String tenantId) {
         try{
             keywords = keywords.replaceAll("_", "\\\\_");
             Pageable pageable = new PageRequest(currentPage, limit, Sort.Direction.DESC, "ts");
-            List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgRepository.findByStorageAndProductnameContaining(storage, keywords, pageable);
+            List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgRepository.findByStorageAndOrgAndProductnameContaining(storage,tenantId, keywords, pageable);
             return repoLinuxPkg;
         }catch(NoSuchElementException e){
             e.printStackTrace();
@@ -454,6 +454,33 @@ public class RepoLinuxPkgService implements IRepoLinuxPkgService {
         }catch(Exception e){
             e.printStackTrace();
             return false;
+        }
+    }
+    @Override
+    public boolean deleteRepoPkgByOrg(String org){
+        try{
+            repoLinuxPkgRepository.deleteByOrg(org);
+            return true;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return false;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<RepoLinuxPkg> getAllByOrg(String tenantId) {
+        try{
+            List<RepoLinuxPkg> repoLinuxPkgs = repoLinuxPkgRepository.findByOrg(tenantId);
+            return repoLinuxPkgs;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return null;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 }

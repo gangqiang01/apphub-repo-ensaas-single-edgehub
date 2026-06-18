@@ -1,6 +1,7 @@
 package com.m2m.management.service.impl;
 
 import com.m2m.management.configuration.UploadConfig;
+import com.m2m.management.entity.RepoApp;
 import com.m2m.management.entity.RepoExe;
 
 import com.m2m.management.entity.Storage;
@@ -38,11 +39,11 @@ public class RepoExeService implements IRepoExeService {
 
 
     @Override
-    public List<RepoExe> getAllByPage(String keywords, int currentPage, int limit, Storage storage) {
+    public List<RepoExe> getAllByPage(String keywords, int currentPage, int limit, Storage storage, String tenantId) {
         try{
             keywords = keywords.replaceAll("_", "\\\\_");
             Pageable pageable = new PageRequest(currentPage, limit, Sort.Direction.DESC, "ts");
-            List<RepoExe> repoExes = repoExeRepository.findByStorageAndProjectnameContaining(storage, keywords, pageable);
+            List<RepoExe> repoExes = repoExeRepository.findByStorageAndOrgAndProjectnameContaining(storage, tenantId, keywords, pageable);
             return repoExes;
         }catch(NoSuchElementException e){
             e.printStackTrace();
@@ -54,11 +55,11 @@ public class RepoExeService implements IRepoExeService {
     }
 
     @Override
-    public List<RepoExe> getAllByTypeAndPage(String type, String keywords, int currentPage, int limit, Storage storage) {
+    public List<RepoExe> getAllByTypeAndPage(String type, String keywords, int currentPage, int limit, Storage storage, String tenantId) {
         try{
             keywords = keywords.replaceAll("_", "\\\\_");
             Pageable pageable = new PageRequest(currentPage, limit, Sort.Direction.DESC, "ts");
-            List<RepoExe> repoExes = repoExeRepository.findByStorageAndTypeAndProjectnameContaining(storage, type, keywords, pageable);
+            List<RepoExe> repoExes = repoExeRepository.findByStorageAndOrgAndTypeAndProjectnameContaining(storage, tenantId, type, keywords, pageable);
             return repoExes;
         }catch(NoSuchElementException e){
             e.printStackTrace();
@@ -436,6 +437,35 @@ public class RepoExeService implements IRepoExeService {
         }catch(Exception e){
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public boolean deleteRepoExeByOrg(String org){
+        try{
+
+            repoExeRepository.deleteByOrg(org);
+            return true;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return false;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<RepoExe> getAllByOrg(String tenantId) {
+        try{
+            List<RepoExe> repoExes = repoExeRepository.findByOrg(tenantId);
+            return repoExes;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return null;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
         }
     }
 }

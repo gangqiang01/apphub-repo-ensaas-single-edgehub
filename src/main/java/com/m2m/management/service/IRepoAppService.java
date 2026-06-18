@@ -18,8 +18,9 @@ public interface IRepoAppService {
      * @Param: limit
      * @return java.util.List<com.m2m.management.entity.RepoApp>
      */
-    List<RepoApp> getAllByPage(String keywords, int currentPage, int limit, Storage storage);
+    List<RepoApp> getAllByPage(String keywords, int currentPage, int limit, Storage storage, String tenantId);
     List<RepoApp>getAll(Storage storage);
+    List<RepoApp> getAllByOrg(String tenantId);
 
     List<RepoApp>getAll();
 
@@ -100,7 +101,7 @@ public interface IRepoAppService {
      * @Param: apkPath
      * @return boolean
      */
-    boolean deleteRepoApp(String versionPath, String pkgPath, String apkPath);
+    boolean deleteRepoAppByOrg(String org);
 
     /**
      * create by: gangqiang

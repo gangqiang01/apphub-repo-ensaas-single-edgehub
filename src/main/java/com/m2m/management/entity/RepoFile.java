@@ -30,6 +30,14 @@ public class RepoFile implements Serializable {
     private Long ts;
     private long size;
 
+    private String org;
+    public String getOrg() {
+        return org;
+    }
+    public void setOrg(String org) {
+        this.org = org;
+    }
+
     @ManyToOne
     @JoinColumn(name = "sid")
     private Storage storage;

@@ -12,7 +12,8 @@ import java.util.List;
 
 public interface IRepoAppsRepository extends JpaRepository<RepoApp, Long> {
 
-    List<RepoApp> findByStorageAndFilenameContaining(Storage storage, String keyword, Pageable pageable);
+    List<RepoApp> findByStorageAndOrgAndFilenameContaining(Storage storage, String org,  String keyword, Pageable pageable);
+    List<RepoApp> findByOrg(String org);
     List<RepoApp> findByFilenameContaining(String keyword);
     List<RepoApp> findByPkgnameAndVersionname(String pkgname, String versionname);
     List<RepoApp> findByStorageAndPkgnameAndVersionname(Storage storage, String pkgname, String versionname);
@@ -28,4 +29,5 @@ public interface IRepoAppsRepository extends JpaRepository<RepoApp, Long> {
     long countByStorageAndFilenameContaining(Storage storage, String filename);
 
     long countByStorage(Storage storage);
+    void deleteByOrg(String org);
 }
