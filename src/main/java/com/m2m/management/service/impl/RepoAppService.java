@@ -208,6 +208,20 @@ public class RepoAppService implements IRepoAppService {
     }
 
     @Override
+    public List<RepoApp> getByTenantId(String packagename, String versionname, String filename, String tenantId, Storage storage) {
+        try{
+            List<RepoApp> repoApps = repoAppsRepository.findByStorageAndPkgnameAndVersionnameAndFilenameAndOrg(storage, packagename, versionname, filename, tenantId);
+            return repoApps;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return null;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public boolean add(RepoApp repoApp) {
         try{
             repoAppsRepository.save(repoApp);
@@ -295,6 +309,26 @@ public class RepoAppService implements IRepoAppService {
                 count = repoAppsRepository.countByStorage(storage);
             }else{
                 count = repoAppsRepository.countByStorageAndFilenameContaining(storage, keywords);
+            }
+
+            return count;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return 0;
+        }catch(Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public long countByTenantId(String keywords, Storage storage, String tenantId) {
+        try{
+            long count = 0;
+            if(keywords == null ||keywords.equals("")){
+                count = repoAppsRepository.countByStorageAndOrg(storage, tenantId);
+            }else{
+                count = repoAppsRepository.countByStorageAndOrgAndFilenameContaining(storage, tenantId, keywords);
             }
 
             return count;

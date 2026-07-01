@@ -22,6 +22,7 @@ public interface IRepoLinuxPkgService {
     RepoLinuxPkg get(long rlid);
 
     RepoLinuxPkg get(String productname, String version, String type, Storage storage);
+    RepoLinuxPkg getByTenantId(String productname, String version, String type, String tenantId, Storage storage);
     RepoLinuxPkg get(Storage storage, String filename);
 
     boolean add(RepoLinuxPkg repoLinuxPkg);
@@ -35,6 +36,7 @@ public interface IRepoLinuxPkgService {
     boolean deleteByProductname(String name, String type);
 
     long count(String keywords, String type, Storage storage);
+    long countByTenantId(String type, String keywords, Storage storage, String tenantId);
     long count();
     long count(Storage storage);
     long count(String keywords, Storage storage);

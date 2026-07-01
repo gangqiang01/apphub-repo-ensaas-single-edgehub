@@ -18,9 +18,11 @@ public interface IRepoLinuxPkgRepository extends JpaRepository<RepoLinuxPkg, Lon
     List<RepoLinuxPkg> findByStorage(Storage storage);
     List<RepoLinuxPkg> findByTypeAndStorage(String type, Storage storage);
     List<RepoLinuxPkg> findByStorageAndProductnameAndVersionAndType(Storage storage, String productname, String version, String type);
+    List<RepoLinuxPkg> findByStorageAndProductnameAndVersionAndTypeAndOrg(Storage storage, String productname, String version, String type, String org);
     List<RepoLinuxPkg> findByStorageAndTypeInAndProductnameContaining(Storage storage, Collection types, String keyword, Pageable pageable);
     List<RepoLinuxPkg> findByStorageAndFilename(Storage storage, String filename);
     long countByStorageAndTypeAndProductnameContaining(Storage storage, String type, String keyword);
+    long countByStorageAndOrgAndTypeAndProductnameContaining(Storage storage, String org, String type, String keyword);
     long countByStorageAndTypeInAndProductnameContaining(Storage storage, Collection types, String keyword);
     long countByStorageAndProductnameContaining(Storage storage, String keyword);
     long countByType(String type);

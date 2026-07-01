@@ -232,8 +232,8 @@ public class RepoAppsController {
             return new ResponseEntity(Response.error("Parameter error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         Storage storage = storageService.get(storageId);
-        if (repoAppsService.get(pkgname, versionname, filename, storage) != null
-                && repoAppsService.get(pkgname, versionname, filename, storage).size() != 0) {
+        if (repoAppsService.getByTenantId(pkgname, versionname, filename, tenantId, storage) != null
+                && repoAppsService.getByTenantId(pkgname, versionname, filename, tenantId, storage).size() != 0) {
             return new ResponseEntity(Response.error("App already exists in db"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         String apkSavePath = "androidApp" + pathSeparate+ tenantId+ pathSeparate + pkgname + pathSeparate + versionname + pathSeparate + filename;
@@ -264,7 +264,7 @@ public class RepoAppsController {
                         repoApp.setOrg(tenantId);
                         repoApp.setStorage(storage);
                         if(repoAppsService.add(repoApp)){
-                            List<RepoApp> rps = repoAppsService.get(pkgname, versionname, filename, storage);
+                            List<RepoApp> rps = repoAppsService.getByTenantId(pkgname, versionname, filename, tenantId, storage);
                             JSONObject json = new JSONObject();
                             json.put("address", downloadAddress);
                             json.put("id", rps.get(0).getraid());

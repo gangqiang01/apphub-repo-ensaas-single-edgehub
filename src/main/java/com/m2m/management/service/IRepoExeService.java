@@ -21,6 +21,7 @@ public interface IRepoExeService {
 
 
     RepoExe get(String projectname, String version, Storage storage);
+    RepoExe getByOrg(String projectname, String version,String org, Storage storage);
     RepoExe get(String filename, String projectname, String version, Storage storage);
     RepoExe get(Storage storage, String filename);
 
@@ -36,6 +37,7 @@ public interface IRepoExeService {
 
     long count(String keywords, Storage storage);
     long count(String type, String keywords, Storage storage);
+    long countByTenantId(String type, String keywords, Storage storage, String tenantId);
     long countInTypes(List<String> types, String keywords, Storage storage);
     long count();
     long countByType(String type, Storage storage);

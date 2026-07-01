@@ -203,6 +203,23 @@ public class RepoExeService implements IRepoExeService {
     }
 
     @Override
+    public RepoExe getByOrg(String projectname, String version, String org, Storage storage) {
+        try{
+            List<RepoExe> repoExes = repoExeRepository.findByStorageAndProjectnameAndVersionAndOrg(storage, projectname, version, org);
+            if(repoExes.size() > 0){
+                return repoExes.get(0);
+            }
+            return null;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return null;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public RepoExe get(String filename, String projectname, String version, Storage storage) {
         try{
             List<RepoExe> repoExes = repoExeRepository.findByStorageAndFilenameAndProjectnameAndVersion(storage, filename, projectname, version);
@@ -334,6 +351,21 @@ public class RepoExeService implements IRepoExeService {
         try{
             long count = 0;
             count = repoExeRepository.countByStorageAndTypeAndProjectnameContaining(storage, type, keywords);
+            return count;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return 0;
+        }catch(Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public long countByTenantId(String type, String keywords, Storage storage, String tenantId) {
+        try{
+            long count = 0;
+            count = repoExeRepository.countByStorageAndOrgAndTypeAndProjectnameContaining(storage,tenantId,  type, keywords);
             return count;
         }catch(NoSuchElementException e){
             e.printStackTrace();

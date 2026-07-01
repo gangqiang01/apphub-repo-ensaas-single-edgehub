@@ -195,6 +195,23 @@ public class RepoLinuxPkgService implements IRepoLinuxPkgService {
     }
 
     @Override
+    public RepoLinuxPkg getByTenantId(String productname, String version, String type, String tenantId, Storage storage) {
+        try{
+            List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgRepository.findByStorageAndProductnameAndVersionAndTypeAndOrg(storage, productname, version, type, tenantId);
+            if(repoLinuxPkg.size() > 0){
+                return repoLinuxPkg.get(0);
+            }
+            return null;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return null;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public RepoLinuxPkg get(Storage storage, String filename) {
         try{
             List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgRepository.findByStorageAndFilename(storage, filename);
@@ -294,6 +311,21 @@ public class RepoLinuxPkgService implements IRepoLinuxPkgService {
         try{
             long count = 0;
             count = repoLinuxPkgRepository.countByStorageAndTypeAndProductnameContaining(storage, type, keywords);
+            return count;
+        }catch(NoSuchElementException e){
+            e.printStackTrace();
+            return 0;
+        }catch(Exception e){
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    @Override
+    public long countByTenantId(String type, String keywords, Storage storage, String tenantId) {
+        try{
+            long count = 0;
+            count = repoLinuxPkgRepository.countByStorageAndOrgAndTypeAndProductnameContaining(storage, tenantId, type, keywords);
             return count;
         }catch(NoSuchElementException e){
             e.printStackTrace();

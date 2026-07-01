@@ -131,20 +131,14 @@ public class RepoExeController {
     public ResponseEntity<List<RepoExe>> getRepoExe(
             @RequestParam(name="storageId", required = true) int storageId,
             @RequestParam(name="tenantId", required = true) String tenantId,
-            @RequestParam(name = "type", required = false) String type,
+            @RequestParam(name = "type", required = true) String type,
             @RequestParam(name="keywords", required = false, defaultValue ="") String keywords,
             @RequestParam(name="currentpage", required = false, defaultValue ="1") int currentpage,
             @RequestParam(name="limit", required = false, defaultValue ="10") int limit) {
         Storage storage = storageService.get(storageId);
-        List<RepoExe> repoExe = new ArrayList<>();
-        long count = 0;
-        if(StringUtils.isEmpty(type)){
-            repoExe = repoExeService.getAllByPage(keywords, currentpage-1, limit, storage, tenantId);
-            count = repoExeService.count(keywords, storage);
-        }else{
-            repoExe = repoExeService.getAllByTypeAndPage(type, keywords,currentpage-1, limit, storage, tenantId);
-            count = repoExeService.count(type, keywords, storage);
-        }
+
+        List<RepoExe> repoExe = repoExeService.getAllByTypeAndPage(type, keywords,currentpage-1, limit, storage, tenantId);
+        long count = repoExeService.countByTenantId(type, keywords, storage, tenantId);
         if(repoExe == null){
             return new ResponseEntity(Response.error("Server error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }else {
@@ -247,7 +241,7 @@ public class RepoExeController {
                 s3Client.createBucket();
             }
 
-            if (repoExeService.get(productname, version, storage) != null) {
+            if (repoExeService.getByOrg(productname, version, tenantId, storage) != null) {
                 return new ResponseEntity(Response.error("Exe already exists in db"), HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -275,7 +269,7 @@ public class RepoExeController {
                 repoExe.setTs(new Date().getTime());
                 repoExe.setStorage(storage);
                 if (repoExeService.add(repoExe)) {
-                    RepoExe repoLinuxPkgs = repoExeService.get(productname, version, storage);
+                    RepoExe repoLinuxPkgs = repoExeService.getByOrg(productname, version, tenantId, storage);
                     JSONObject json = new JSONObject();
                     json.put("address", downloadAddress);
                     json.put("id", repoLinuxPkgs.getreid());

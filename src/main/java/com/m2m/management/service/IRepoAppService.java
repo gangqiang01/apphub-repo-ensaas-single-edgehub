@@ -57,7 +57,7 @@ public interface IRepoAppService {
 
     List<RepoApp> get(String packagename, String versionname, String filename, Storage storage);
 
-
+    List<RepoApp> getByTenantId(String packagename, String versionname, String filename, String tenantId, Storage storage);
     /**
      * create by: gangqiang
      * description: TODO
@@ -112,6 +112,7 @@ public interface IRepoAppService {
      * @return long
      */
     long count(String keywords, Storage storage);
+    long countByTenantId(String keywords, Storage storage, String tenantId);
     long count(Storage storage);
     long count();
 

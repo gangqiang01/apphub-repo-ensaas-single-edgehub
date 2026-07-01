@@ -126,17 +126,11 @@ public class RepoLinuxPkgController {
             @RequestParam(name="currentpage", required = false, defaultValue ="1") int currentpage,
             @RequestParam(name="limit", required = false, defaultValue ="10") int limit,
             @RequestParam(name="tenantId", required = true) String tenantId,
-            @RequestParam(name = "type", required = false) String type){
+            @RequestParam(name = "type", required = true) String type){
         Storage storage = storageService.get(storageId);
-        List<RepoLinuxPkg> repoLinuxPkg = new ArrayList<>();
-        long count = 0;
-        if(StringUtils.isEmpty(type)){
-            repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, currentpage-1, limit, storage, tenantId);
-            count = repoLinuxPkgService.count(keywords, storage);
-        }else{
-            repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, type, currentpage-1, limit, storage, tenantId);
-            count = repoLinuxPkgService.count(keywords, type, storage);
-        }
+        List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, type, currentpage-1, limit, storage, tenantId);
+        long  count = repoLinuxPkgService.countByTenantId(keywords, type, storage, tenantId);
+
         if(repoLinuxPkg == null){
             return new ResponseEntity(Response.error("Server error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }else {
@@ -239,7 +233,7 @@ public class RepoLinuxPkgController {
             if(StringUtils.isEmpty(productname)|| StringUtils.isEmpty(version)){
                 return new ResponseEntity(Response.error("This filename format error"), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            if (repoLinuxPkgService.get(productname, version, type, storage) != null) {
+            if (repoLinuxPkgService.getByTenantId(productname, version, type, tenantId, storage) != null) {
                 return new ResponseEntity(Response.error("LinuxPkg already exists in db"), HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -265,7 +259,7 @@ public class RepoLinuxPkgController {
                 repoLinuxPkg.setOrg(tenantId);
                 repoLinuxPkg.setStorage(storage);
                 if (repoLinuxPkgService.add(repoLinuxPkg)) {
-                    repoLinuxPkg = repoLinuxPkgService.get(productname, version, type, storage);
+                    repoLinuxPkg = repoLinuxPkgService.getByTenantId(productname, version, type, tenantId, storage);
                     JSONObject json = new JSONObject();
                     json.put("address", downloadAddress);
                     json.put("id", repoLinuxPkg.getRlid());

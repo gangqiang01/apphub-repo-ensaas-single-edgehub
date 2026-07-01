@@ -18,6 +18,7 @@ public interface IRepoAppsRepository extends JpaRepository<RepoApp, Long> {
     List<RepoApp> findByPkgnameAndVersionname(String pkgname, String versionname);
     List<RepoApp> findByStorageAndPkgnameAndVersionname(Storage storage, String pkgname, String versionname);
     List<RepoApp> findByStorageAndPkgnameAndVersionnameAndFilename(Storage storage, String pkgname, String versionname, String filename);
+    List<RepoApp> findByStorageAndPkgnameAndVersionnameAndFilenameAndOrg(Storage storage, String pkgname, String versionname, String filename, String org);
     List<RepoApp> findByPkgname(String pkgname);
     List<RepoApp> findByPkgnameAndStorage(String pkgname, Storage storage);
     //name 查询
@@ -27,7 +28,8 @@ public interface IRepoAppsRepository extends JpaRepository<RepoApp, Long> {
     List<RepoApp> findByPkgnameAndFilenameContaining(String pkgname, String filename);
     List<RepoApp> findByStorageAndPkgnameAndFilenameContaining(Storage storage, String pkgname, String filename);
     long countByStorageAndFilenameContaining(Storage storage, String filename);
-
+    long countByStorageAndOrgAndFilenameContaining(Storage storage,String org, String filename);
     long countByStorage(Storage storage);
+    long countByStorageAndOrg(Storage storage, String org);
     void deleteByOrg(String org);
 }
