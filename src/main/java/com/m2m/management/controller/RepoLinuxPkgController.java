@@ -129,7 +129,7 @@ public class RepoLinuxPkgController {
             @RequestParam(name = "type", required = true) String type){
         Storage storage = storageService.get(storageId);
         List<RepoLinuxPkg> repoLinuxPkg = repoLinuxPkgService.getAllByPage(keywords, type, currentpage-1, limit, storage, tenantId);
-        long  count = repoLinuxPkgService.countByTenantId(keywords, type, storage, tenantId);
+        long  count = repoLinuxPkgService.countByTenantId(type, keywords,  storage, tenantId);
 
         if(repoLinuxPkg == null){
             return new ResponseEntity(Response.error("Server error"), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -261,7 +261,8 @@ public class RepoLinuxPkgController {
                 if (repoLinuxPkgService.add(repoLinuxPkg)) {
                     repoLinuxPkg = repoLinuxPkgService.getByTenantId(productname, version, type, tenantId, storage);
                     JSONObject json = new JSONObject();
-                    json.put("address", downloadAddress);
+                    json.put("address", debSavePath);
+                    json.put("filename", filename);
                     json.put("id", repoLinuxPkg.getRlid());
                     json.put("type", type);
                     return new ResponseEntity(Response.success(json), HttpStatus.OK);

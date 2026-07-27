@@ -7,6 +7,7 @@ import net.bytebuddy.agent.builder.AgentBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,5 +32,6 @@ public interface IRepoAppsRepository extends JpaRepository<RepoApp, Long> {
     long countByStorageAndOrgAndFilenameContaining(Storage storage,String org, String filename);
     long countByStorage(Storage storage);
     long countByStorageAndOrg(Storage storage, String org);
+    @Transactional
     void deleteByOrg(String org);
 }

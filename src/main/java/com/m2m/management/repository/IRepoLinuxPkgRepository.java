@@ -34,6 +34,7 @@ public interface IRepoLinuxPkgRepository extends JpaRepository<RepoLinuxPkg, Lon
     List<RepoLinuxPkg> findByTypeIn(Collection types);
     List<RepoLinuxPkg> findByStorageAndTypeIn(Storage storage, Collection types);
     long countByTypeIn(Collection types);
+    @Transactional
     void deleteByOrg(String org);
     List<RepoLinuxPkg> findByOrg(String org);
 }

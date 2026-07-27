@@ -271,7 +271,8 @@ public class RepoExeController {
                 if (repoExeService.add(repoExe)) {
                     RepoExe repoLinuxPkgs = repoExeService.getByOrg(productname, version, tenantId, storage);
                     JSONObject json = new JSONObject();
-                    json.put("address", downloadAddress);
+                    json.put("address", savePath);
+                    json.put("filename", filename);
                     json.put("id", repoLinuxPkgs.getreid());
                     json.put("type", type);
                     return new ResponseEntity(Response.success(json), HttpStatus.OK);

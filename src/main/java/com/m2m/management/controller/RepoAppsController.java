@@ -266,7 +266,8 @@ public class RepoAppsController {
                         if(repoAppsService.add(repoApp)){
                             List<RepoApp> rps = repoAppsService.getByTenantId(pkgname, versionname, filename, tenantId, storage);
                             JSONObject json = new JSONObject();
-                            json.put("address", downloadAddress);
+                            json.put("address", apkSavePath);
+                            json.put("filename", filename);
                             json.put("id", rps.get(0).getraid());
                             return new ResponseEntity(Response.success(), HttpStatus.OK);
                         }else{

@@ -4,6 +4,7 @@ import com.m2m.management.entity.RepoExe;
 import com.m2m.management.entity.Storage;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +28,7 @@ public interface IRepoExeRepository extends JpaRepository<RepoExe, Long> {
     long countByStorageAndOrgAndTypeAndProjectnameContaining(Storage storage,String org, String type, String projectname);
     long countByStorage(Storage storage);
     long countByTypeAndStorage(String type, Storage storage);
+    @Transactional
     void deleteByOrg(String org);
     List<RepoExe> findByOrg(String org);
 }

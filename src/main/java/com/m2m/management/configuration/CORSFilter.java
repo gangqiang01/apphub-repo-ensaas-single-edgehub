@@ -56,7 +56,7 @@ public class CORSFilter implements Filter {
             request.getRequestURI().startsWith("/getExeIcon")||
             request.getRequestURI().equals("/")||
             request.getRequestURI().indexOf("/bigFile") != -1||
-                    request.getRequestURI().indexOf("/downloadApp")>-1||
+//                    request.getRequestURI().indexOf("/downloadApp")>-1||
                     request.getRequestURI().indexOf("/getApp")>-1||
                     request.getRequestURI().indexOf("/configMap/time")>-1||
                     request.getRequestURI().indexOf("/configMap/customTheme")>-1||
