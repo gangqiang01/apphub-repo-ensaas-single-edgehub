@@ -199,22 +199,23 @@ public class RepoExeController {
     }
     @RequestMapping(value = "/repoexe/tenantId/{tenantId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteRepoExeByTenantId(@PathVariable("tenantId") String tenantId){
-        if(repoExeService.deleteRepoExeByOrg(tenantId)){
-            List<RepoExe> repoExes = repoExeService.getAllByOrg(tenantId);
-            if(repoExes != null&& repoExes.size() > 0){
-                for(RepoExe repoExe: repoExes){
+        List<RepoExe> repoExes = repoExeService.getAllByOrg(tenantId);
+        if(repoExes != null&& repoExes.size() > 0){
+            for(RepoExe repoExe: repoExes){
+                if(repoExeService.delete(repoExe.getreid())){
                     String exeSavePath =  repoExe.getAddress().substring(5);
                     Storage storage = repoExe.getStorage();
                     S3Client s3Client = S3Client.getInstance(storage);
                     if(s3Client.isBucketExit()&&s3Client.isObjectExit(exeSavePath)){
                         s3Client.deleteObject(exeSavePath);
                     }
+                }else{
+                   log.error("repo exe is not found in db, id"+repoExe.getreid());
                 }
             }
-            return new ResponseEntity(Response.success(), HttpStatus.OK);
-        }else{
-            return new ResponseEntity(Response.error("App is not found in db"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return new ResponseEntity(Response.success(), HttpStatus.OK);
+
     }
     @RequestMapping(value = "/repoexe/bigFile", method = RequestMethod.POST)
     public ResponseEntity<Void> createRepoExe(

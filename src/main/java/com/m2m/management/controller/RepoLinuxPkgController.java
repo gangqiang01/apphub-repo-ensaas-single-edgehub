@@ -171,22 +171,22 @@ public class RepoLinuxPkgController {
     }
     @RequestMapping(value = "/repoLinuxPkg/tenantId/{tenantId}", method = RequestMethod.DELETE)
     public ResponseEntity<Void> deleteRepoExeByTenantId(@PathVariable("tenantId") String tenantId){
-        if(repoLinuxPkgService.deleteRepoPkgByOrg(tenantId)){
-            List<RepoLinuxPkg> repoPkgs = repoLinuxPkgService.getAllByOrg(tenantId);
-            if(repoPkgs != null&& repoPkgs.size() > 0){
-                for(RepoLinuxPkg repoPkg: repoPkgs){
+        List<RepoLinuxPkg> repoPkgs = repoLinuxPkgService.getAllByOrg(tenantId);
+        if(repoPkgs != null&& repoPkgs.size() > 0){
+            for(RepoLinuxPkg repoPkg: repoPkgs){
+                if(repoLinuxPkgService.delete(repoPkg.getRlid())){
                     String fileSavePath =  repoPkg.getAddress().substring(5);
                     Storage storage = repoPkg.getStorage();
                     S3Client s3Client = S3Client.getInstance(storage);
                     if(s3Client.isBucketExit()&&s3Client.isObjectExit(fileSavePath)){
                         s3Client.deleteObject(fileSavePath);
                     }
+                }else{
+                    log.error("repo linux pkg is not found in db, id"+repoPkg.getRlid());
                 }
             }
-            return new ResponseEntity(Response.success(), HttpStatus.OK);
-        }else{
-            return new ResponseEntity(Response.error("LinuxPkg is not found in db"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return new ResponseEntity(Response.success(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/repoLinuxPkg/{rlid}", method = RequestMethod.DELETE)
