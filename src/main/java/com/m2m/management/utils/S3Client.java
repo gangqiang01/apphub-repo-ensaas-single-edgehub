@@ -33,7 +33,10 @@ import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.*;
 import com.microsoft.azure.storage.core.Base64;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.net.ssl.SSLContext;
 
 
 @Slf4j
@@ -56,18 +59,23 @@ public class S3Client {
         ClientConfiguration config = new ClientConfiguration();
         // SDK default using https, here i using HTTP
 
+        String region = "us-east-1";
+        if(endpoint != null && endpoint.toLowerCase().contains("aliyun")){
+            region = "cn-hangzhou";
+        }
+
         //##########https
         if(endpoint!= null&& endpoint.startsWith("https")){
 //            System.out.println("https");
             config.withProtocol(Protocol.HTTPS);
             config.setMaxConnections(200);
             config.setConnectionTimeout(8000);
-            config.setSignerOverride("S3SignerType");
+//            config.setSignerOverride("S3SignerType");
             this.s3 = AmazonS3ClientBuilder.standard()
                     .withCredentials(new AWSStaticCredentialsProvider(
                             new BasicAWSCredentials(accessKeyId,secretAccessKey )
                     )).withClientConfiguration(config)
-                    .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint,"" ))
+                    .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region ))
                     .withPathStyleAccessEnabled(true).build();
 
         }else{
@@ -82,14 +90,14 @@ public class S3Client {
                         .withCredentials(new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials(accessKeyId,secretAccessKey )
                         )).withClientConfiguration(config)
-                        .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint,"" ))
+                        .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region ))
                         .build();
             }else{
                 this.s3 = AmazonS3ClientBuilder.standard()
                         .withCredentials(new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials(accessKeyId,secretAccessKey )
                         )).withClientConfiguration(config)
-                        .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint,"" ))
+                        .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, region ))
                         .withPathStyleAccessEnabled(true).build();
             }
 
