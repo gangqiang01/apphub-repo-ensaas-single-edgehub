@@ -62,6 +62,12 @@ public class S3Client {
         String region = "us-east-1";
         if(endpoint != null && endpoint.toLowerCase().contains("aliyun")){
             region = "cn-hangzhou";
+        } else if (endpoint != null && endpoint.toLowerCase().contains("amazonaws.com")) {
+            // derive region from endpoint host, e.g. s3.ap-southeast-1.amazonaws.com
+            String[] hostParts = endpoint.replaceFirst("^https?://", "").split("\\.");
+            if (hostParts.length >= 3 && !"amazonaws".equals(hostParts[1])) {
+                region = hostParts[1];
+            }
         }
 
         //##########https
