@@ -287,16 +287,15 @@ public class S3Client {
     public boolean isObjectExit(String key) {
         int len = key.length();
         if(isS3){
-            ObjectListing objectListing = this.s3.listObjects(bucketName);
-            String s = new String();
-            for(S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                s = objectSummary.getKey();
-                int slen = s.length();
-                if(len == slen) {
-                    int i;
-                    for(i=0;i<len;i++) if(s.charAt(i) != key.charAt(i)) break;
-                    if(i == len) return true;
-                }
+             try {
+                // Use SDK built-in efficient method, directly send HEAD request to check without iterating the list
+                return this.s3.doesObjectExist(bucketName, key);
+            } catch (AmazonServiceException e) {
+                log.error("Failed to check if OSS file exists, Bucket: {}, Key: {}, Error: {}", bucketName, key, e.getMessage());
+                return false;
+            } catch (SdkClientException e) {
+                log.error("Failed to connect to OSS client", e);
+                return false;
             }
         }else{
             try {
@@ -332,12 +331,20 @@ public class S3Client {
 
     public boolean deleteObject(String key) {
         if(isS3){
-            if(this.s3.doesBucketExistV2(bucketName) == false) {
-//            log.info(bucketName + " does not exists!");
+            try {
+                // Optional: If business logic doesn't depend on isObjectExit, directly try to delete; OSS won't error on deleting non-existent files
+                this.s3.deleteObject(bucketName, key);
+                log.info("Successfully deleted OSS file, Bucket: {}, Key: {}", bucketName, key);
+                return true;
+            } catch (AmazonServiceException e) {
+                // This prints the specific error code returned by Alibaba Cloud, e.g. AccessDenied, NoSuchKey, etc.
+                log.error("Failed to delete OSS file (server error), Bucket: {}, Key: {}, ErrorCode: {}, Message: {}", 
+                        bucketName, key, e.getErrorCode(), e.getMessage());
+                return false;
+            } catch (SdkClientException e) {
+                log.error("Failed to delete OSS file (client error), Bucket: {}, Key: {}", bucketName, key, e);
                 return false;
             }
-            this.s3.deleteObject(bucketName, key);
-            return true;
         }else{
             try {
                 CloudBlockBlob blob = container.getBlockBlobReference(key);

@@ -195,9 +195,14 @@ public class RepoLinuxPkgController {
         if(repoLinuxPkg == null){
             return new ResponseEntity(Response.error("LinuxPkg is not found in db"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        String filename = repoLinuxPkg.getFilename();
         String fileSavePath = repoLinuxPkg.getAddress().substring(5);
+        if(!fileSavePath.contains(filename)){
+            fileSavePath =  repoLinuxPkg.getAddress().substring(5) + pathSeparate + filename;
+        }
         Storage storage = repoLinuxPkg.getStorage();
         S3Client s3Client = S3Client.getInstance(storage);
+        log.info("s3 key:"+fileSavePath);
         if(s3Client.isBucketExit()&&s3Client.isObjectExit(fileSavePath)){
             s3Client.deleteObject(fileSavePath);
         }

@@ -2,11 +2,9 @@ package com.m2m.management.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
-import sun.net.www.protocol.https.HttpsURLConnectionImpl;
 
 import javax.net.ssl.*;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.URL;
@@ -185,19 +183,9 @@ public class HttpUtil {
 // add patch request
 	private static void setRequestMethod(final HttpURLConnection c, final String value) {
 		try {
-			final Object target;
-			if (c instanceof HttpsURLConnectionImpl) {
-				final Field delegate = HttpsURLConnectionImpl.class.getDeclaredField("delegate");
-				delegate.setAccessible(true);
-				target = delegate.get(c);
-			} else {
-				target = c;
-			}
-			final Field f = HttpURLConnection.class.getDeclaredField("method");
-			f.setAccessible(true);
-			f.set(target, value);
-		} catch (IllegalAccessException | NoSuchFieldException ex) {
-			throw new AssertionError(ex);
+			c.setRequestMethod(value);
+		} catch (ProtocolException ex) {
+			throw new IllegalStateException("Failed to set HTTP method: " + value, ex);
 		}
 	}
 

@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
-import sun.misc.BASE64Decoder;
 
 import java.io.*;
+import java.util.Base64;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -358,10 +358,9 @@ public class FileUtil {
             imgStr = imgStr.substring(imgStr.indexOf("base64,")+7);
         }
         System.out.println(imgStr);
-        BASE64Decoder decoder = new BASE64Decoder();
         try {
             // Base64解码
-            byte[] bytes = decoder.decodeBuffer(imgStr);
+            byte[] bytes = Base64.getDecoder().decode(imgStr);
             for (int i = 0; i < bytes.length; ++i) {
                 if (bytes[i] < 0) {// 调整异常数据
                     bytes[i] += 256;

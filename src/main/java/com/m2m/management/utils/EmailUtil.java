@@ -5,7 +5,6 @@ import com.m2m.management.service.IServerEmailService;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import sun.nio.cs.ext.GBK;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
