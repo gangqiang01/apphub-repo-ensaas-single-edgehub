@@ -152,42 +152,92 @@ public class StorageController {
         }
     }
 
-    @RequestMapping(value = "/storage/{sid}", method = RequestMethod.POST)
-    public ResponseEntity<String> saveStorage(@PathVariable("sid") long sid){
-        Storage storage = storageRepository.findById(sid).get();
+    @RequestMapping(value = "/storage/{sid}", method = RequestMethod.PUT)
+    public ResponseEntity<String> saveStorage(@PathVariable("sid") long sid,
+                                              @RequestBody(required = false) JSONObject body){
+        Storage storage = storageRepository.findById(sid).orElse(null);
+        if(storage == null){
+            return new ResponseEntity(Response.error("The storage is not exist"), HttpStatus.NOT_FOUND);
+        }
+        // 部分更新:仅覆盖请求体中提供的字段;不传 body 时 hasFieldUpdate=false,不做 DB 写入
+        boolean hasFieldUpdate = mergeStorageFields(storage, body);
+        if(!hasFieldUpdate){
+            return new ResponseEntity(Response.error("No fields to update"), HttpStatus.BAD_REQUEST);
+        }
         String type = storage.getType();
-        if(type.equals(S3Client.AZURE)){
-            String connectionString = storage.getBlobaccesskey();
-            String container = storage.getBlobbucket();
-            S3Client.clearInstance();
-            S3Client s3Client = S3Client.getInstance(connectionString, container);
-            boolean res = s3Client.isBucketExit();
-            if(res == false){
-                S3Client.clearInstance();
-                return new ResponseEntity(Response.error("The storage you chose is not exist"), HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            // 用更新后的凭据校验连通性
+            if(S3Client.AZURE.equals(type)){
+                S3Client s3Client = S3Client.getInstance(storage.getBlobaccesskey(), storage.getBlobbucket());
+                if(!s3Client.isBucketExit()){
+                    return new ResponseEntity(Response.error("The storage you chose is not exist"), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            }else{
+                try{
+                    S3Client s3Client = S3Client.getInstance(storage.getBlobaccesskey(), storage.getBlobsecretkey(), storage.getBloburl(), storage.getBlobbucket());
+                    s3Client.listBuckets();
+                }catch (Exception e){
+                    log.error("validate storage failed, sid={}", sid, e);
+                    return new ResponseEntity(Response.error("The storage you chose is not exist"), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             }
-        }else{
-            String bloburl = storage.getBloburl();
-            String bucket = storage.getBlobbucket();
-            String accesskey = storage.getBlobaccesskey();
-            String secretkey = storage.getBlobsecretkey();
-            try{
-                S3Client.clearInstance();
-                S3Client s3Client = S3Client.getInstance(accesskey, secretkey, bloburl, bucket);
-                s3Client.listBuckets();
-            }catch (Exception e){
-                S3Client.clearInstance();
-                e.printStackTrace();
-                return new ResponseEntity(Response.error("The storage you chose is not exist"), HttpStatus.INTERNAL_SERVER_ERROR);
+            // 校验通过后直接持久化字段变更
+            if(storageService.update(storage)){
+                return new ResponseEntity(Response.success(), HttpStatus.OK);
+            }else{
+                return new ResponseEntity(Response.error("Update storage in db error"), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }
-        boolean isUpdate = storageService.update(sid, storage);
-        if(isUpdate){
+        }finally {
             S3Client.clearInstance();
-            return new ResponseEntity(Response.success(), HttpStatus.OK);
-        }else{
-            return new ResponseEntity(Response.error("Update storage in db error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // 将 body 中提供的字段合并到 storage;字段名与 createStorage 保持一致,便于前端复用
+    // S3:accesskey/secretkey/bucket/bloburl  Azure:connectionString/container  通用:platform
+    private boolean mergeStorageFields(Storage storage, JSONObject body){
+        if(body == null){
+            return false;
+        }
+        boolean changed = false;
+        String accesskey = body.getString("accesskey");
+        if(!StringUtils.isNullOrEmpty(accesskey)){
+            storage.setBlobaccesskey(accesskey);
+            changed = true;
+        }
+        String secretkey = body.getString("secretkey");
+        if(!StringUtils.isNullOrEmpty(secretkey)){
+            storage.setBlobsecretkey(secretkey);
+            changed = true;
+        }
+        String bucket = body.getString("bucket");
+        if(!StringUtils.isNullOrEmpty(bucket)){
+            storage.setBlobbucket(bucket);
+            changed = true;
+        }
+        String bloburl = body.getString("bloburl");
+        if(!StringUtils.isNullOrEmpty(bloburl)){
+            storage.setBloburl(bloburl);
+            changed = true;
+        }
+        String connectionString = body.getString("connectionString");
+        if(!StringUtils.isNullOrEmpty(connectionString)){
+            storage.setBlobaccesskey(connectionString);
+            changed = true;
+        }
+        String container = body.getString("container");
+        if(!StringUtils.isNullOrEmpty(container)){
+            storage.setBlobbucket(container);
+            changed = true;
+        }
+        String platform = body.getString("platform");
+        if(!StringUtils.isNullOrEmpty(platform)){
+            storage.setType(platform);
+            changed = true;
+        }
+        if(changed){
+            storage.setTs(new Date().getTime());
+        }
+        return changed;
     }
 
     @RequestMapping(value = "/storage/{sid}", method = RequestMethod.DELETE)
