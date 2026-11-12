@@ -6,8 +6,10 @@ import com.m2m.management.restful.SsoService;
 
 import com.m2m.management.service.IProductImageService;
 import com.m2m.management.service.IServerEmailService;
+import com.m2m.management.service.IStorageService;
 import com.m2m.management.truelicense.VerifyLicense;
 import com.m2m.management.utils.FileToByte;
+import com.m2m.management.utils.AesGcmUtil;
 import com.m2m.management.utils.VerifyWpLicense;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +43,15 @@ public class InitDB implements ApplicationRunner {
     private String type;
     @Autowired
     private IServerEmailService serverEmailService;
+
+    @Autowired
+    private IStorageService storageService;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         String base64 = "data:image/png;base64,";
         ServerEmail se= null;
+        storageService.getAll();
         SsoService ssoService = new SsoService();
         try {
             if(!ssoService.checkClientInfo()){
@@ -76,7 +83,7 @@ public class InitDB implements ApplicationRunner {
                 se = new ServerEmail();
                 se.setCemailserver(cemailserver);
                 se.setUsername(emailname);
-                se.setPassword(password);
+                se.setPassword(AesGcmUtil.encryptIfNeeded(password));
                 se.setType(type);
                 serverEmailService.add(se);
             }

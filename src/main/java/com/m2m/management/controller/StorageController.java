@@ -6,7 +6,6 @@ import com.m2m.management.constant.AmazonConstant;
 import com.m2m.management.constant.UserRole;
 import com.m2m.management.entity.*;
 import com.m2m.management.former.Response;
-import com.m2m.management.repository.IStorageRepository;
 import com.m2m.management.service.*;
 import com.m2m.management.service.impl.StorageService;
 import com.m2m.management.utils.S3Client;
@@ -50,9 +49,6 @@ public class StorageController {
 
     @Autowired
     IRepoLinuxPkgService repoLinuxPkgService;
-
-    @Autowired
-    IStorageRepository storageRepository;
 
     @RequestMapping(value = "/storage/byPage", method = RequestMethod.GET)
     public ResponseEntity<List<Storage>> getStorageByge(
@@ -155,7 +151,7 @@ public class StorageController {
     @RequestMapping(value = "/storage/{sid}", method = RequestMethod.PUT)
     public ResponseEntity<String> saveStorage(@PathVariable("sid") long sid,
                                               @RequestBody(required = false) JSONObject body){
-        Storage storage = storageRepository.findById(sid).orElse(null);
+        Storage storage = storageService.get(sid);
         if(storage == null){
             return new ResponseEntity(Response.error("The storage is not exist"), HttpStatus.NOT_FOUND);
         }

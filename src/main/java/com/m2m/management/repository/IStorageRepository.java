@@ -26,4 +26,6 @@ public interface IStorageRepository  extends JpaRepository<Storage, Long> {
     Storage findByBloburlAndBlobbucketAndBlobaccesskeyAndType(String bloburl, String blobbucket, String blobaccesskey, String type);
     Storage findByBlobbucketAndBlobaccesskeyAndType(String blobbucket, String blobaccesskey, String type);
 
+    List<Storage> findAllByBloburlAndBlobbucketAndType(String bloburl, String blobbucket, String type);
+    List<Storage> findAllByBlobbucketAndType(String blobbucket, String type);
 }

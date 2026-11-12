@@ -1,6 +1,9 @@
 package com.m2m.management.entity;
 
+import com.m2m.management.utils.AesGcmUtil;
+
 import javax.persistence.*;
+import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -110,19 +113,54 @@ public class Storage implements java.io.Serializable {
     }
 
     public String getBlobaccesskey() {
-        return blobaccesskey;
+        return decryptCredential(blobaccesskey);
     }
 
     public void setBlobaccesskey(String blobaccesskey) {
-        this.blobaccesskey = blobaccesskey;
+        this.blobaccesskey = encryptCredentialIfNeeded(blobaccesskey);
     }
 
     public String getBlobsecretkey() {
-        return blobsecretkey;
+        return decryptCredential(blobsecretkey);
     }
 
     public void setBlobsecretkey(String blobsecretkey) {
+        this.blobsecretkey = encryptCredentialIfNeeded(blobsecretkey);
+    }
+
+    public String storedBlobaccesskey() {
+        return blobaccesskey;
+    }
+
+    public void storedBlobaccesskey(String blobaccesskey) {
+        this.blobaccesskey = blobaccesskey;
+    }
+
+    public String storedBlobsecretkey() {
+        return blobsecretkey;
+    }
+
+    public void storedBlobsecretkey(String blobsecretkey) {
         this.blobsecretkey = blobsecretkey;
+    }
+
+    private String decryptCredential(String value) {
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+        try {
+            return AesGcmUtil.decrypt(value);
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
+            throw new IllegalStateException("Stored storage credential cannot be decrypted", e);
+        }
+    }
+
+    private String encryptCredentialIfNeeded(String value) {
+        try {
+            return AesGcmUtil.encryptIfNeeded(value);
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Storage credential could not be encrypted", e);
+        }
     }
 
     public String getType() {

@@ -6,6 +6,7 @@ import com.m2m.management.entity.User;
 import com.m2m.management.repository.IStorageRepository;
 import com.m2m.management.service.IStorageService;
 import com.m2m.management.service.IUserService;
+import com.m2m.management.utils.AesGcmUtil;
 import com.m2m.management.utils.S3Client;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Date;
+import java.security.GeneralSecurityException;
 
 @Service
 @Slf4j
@@ -35,13 +37,11 @@ public class StorageService implements IStorageService {
             keywords = keywords.replaceAll("_", "\\\\_");
             Pageable pageable = new PageRequest(currentPage, limit, Sort.Direction.DESC, "ts");
             List<Storage> storages = storageRepository.findByBlobbucketContaining(keywords, pageable);
+            migrateLegacyCredentials(storages);
             return storages;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return null;
         }catch(Exception e){
-            e.printStackTrace();
-            return null;
+            log.error("Failed to load storage page or migrate credentials", e);
+            throw new IllegalStateException("Failed to load storage page or migrate credentials", e);
         }
     }
 
@@ -49,13 +49,11 @@ public class StorageService implements IStorageService {
     public List<Storage> getAll() {
         try{
             List<Storage> storages = storageRepository.findAll();
+            migrateLegacyCredentials(storages);
             return storages;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return null;
         }catch(Exception e){
-            e.printStackTrace();
-            return null;
+            log.error("Failed to load storage configurations or migrate credentials", e);
+            throw new IllegalStateException("Failed to load storage configurations or migrate credentials", e);
         }
     }
 
@@ -63,14 +61,10 @@ public class StorageService implements IStorageService {
     public Storage get(long sid) {
         try{
             Optional<Storage> opstorage = storageRepository.findById(sid);
-            Storage storage = opstorage.get();
-            return storage;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return null;
+            return migrateLegacyCredentials(opstorage.orElse(null));
         }catch(Exception e){
-            e.printStackTrace();
-            return null;
+            log.error("Failed to load storage configuration or migrate credentials, sid={}", sid, e);
+            throw new IllegalStateException("Failed to load storage configuration or migrate credentials", e);
         }
     }
 
@@ -78,13 +72,10 @@ public class StorageService implements IStorageService {
     public Storage getByType(String type) {
         try{
             Storage storage = storageRepository.findByType(type);
-            return storage;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return null;
+            return migrateLegacyCredentials(storage);
         }catch(Exception e){
-            e.printStackTrace();
-            return null;
+            log.error("Failed to load storage by type or migrate credentials, type={}", type, e);
+            throw new IllegalStateException("Failed to load storage by type or migrate credentials", e);
         }
     }
 
@@ -92,71 +83,60 @@ public class StorageService implements IStorageService {
     public Storage get(String blobbucket) {
         try{
             Storage storage = storageRepository.findByBlobbucket(blobbucket);
-            return storage;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return null;
+            return migrateLegacyCredentials(storage);
         }catch(Exception e){
-            e.printStackTrace();
-            return null;
+            log.error("Failed to load storage by bucket or migrate credentials", e);
+            throw new IllegalStateException("Failed to load storage by bucket or migrate credentials", e);
         }
     }
 
     @Override
     public  long count(String bloburl, String blobbucket, String blobaccesskey, String type) {
         try{
-            long count = 0;
-            count = storageRepository.countByBloburlAndBlobbucketAndBlobaccesskeyAndType(bloburl, blobbucket, blobaccesskey, type);
-            return count;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return 0;
+            List<Storage> storages = storageRepository.findAllByBloburlAndBlobbucketAndType(
+                    bloburl, blobbucket, type);
+            migrateLegacyCredentials(storages);
+            return countByAccessKey(storages, blobaccesskey);
         }catch(Exception e){
-            e.printStackTrace();
-            return 0;
+            log.error("Failed to count matching storage credentials", e);
+            throw new IllegalStateException("Failed to count matching storage credentials", e);
         }
     }
 
     @Override
     public  long count(String blobbucket, String blobaccesskey, String type) {
         try{
-            long count = 0;
-            count = storageRepository.countByBlobbucketAndBlobaccesskeyAndType(blobbucket, blobaccesskey, type);
-            return count;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return 0;
+            List<Storage> storages = storageRepository.findAllByBlobbucketAndType(blobbucket, type);
+            migrateLegacyCredentials(storages);
+            return countByAccessKey(storages, blobaccesskey);
         }catch(Exception e){
-            e.printStackTrace();
-            return 0;
+            log.error("Failed to count matching storage credentials", e);
+            throw new IllegalStateException("Failed to count matching storage credentials", e);
         }
     }
 
     @Override
     public Storage get(String bloburl, String blobbucket, String blobaccesskey, String type) {
         try{
-            Storage storage = storageRepository.findByBloburlAndBlobbucketAndBlobaccesskeyAndType(bloburl, blobbucket, blobaccesskey, type);
-            return storage;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return null;
+            List<Storage> storages = storageRepository.findAllByBloburlAndBlobbucketAndType(
+                    bloburl, blobbucket, type);
+            migrateLegacyCredentials(storages);
+            return findByAccessKey(storages, blobaccesskey);
         }catch(Exception e){
-            e.printStackTrace();
-            return null;
+            log.error("Failed to find storage by credentials", e);
+            throw new IllegalStateException("Failed to find storage by credentials", e);
         }
     }
 
     @Override
     public Storage get(String blobbucket, String blobaccesskey, String type) {
         try{
-            Storage storage = storageRepository.findByBlobbucketAndBlobaccesskeyAndType(blobbucket, blobaccesskey, type);
-            return storage;
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
-            return null;
+            List<Storage> storages = storageRepository.findAllByBlobbucketAndType(blobbucket, type);
+            migrateLegacyCredentials(storages);
+            return findByAccessKey(storages, blobaccesskey);
         }catch(Exception e){
-            e.printStackTrace();
-            return null;
+            log.error("Failed to find storage by credentials", e);
+            throw new IllegalStateException("Failed to find storage by credentials", e);
         }
     }
 
@@ -197,6 +177,7 @@ public class StorageService implements IStorageService {
     public boolean add(Storage storage) {
         try{
             storage.setTs(new Date().getTime());
+            encryptCredentials(storage);
             storageRepository.save(storage);
             return true;
         }catch(NoSuchElementException e){
@@ -213,10 +194,12 @@ public class StorageService implements IStorageService {
         try{
             Storage oldStorage = storageRepository.findByChoose(1);
             if(oldStorage != null){
+                migrateLegacyCredentials(oldStorage);
                 oldStorage.setChoose(0);
                 storageRepository.save(oldStorage);
             }
             Storage newStorage = storageRepository.findById(sid).get();
+            migrateLegacyCredentials(newStorage);
             newStorage.setChoose(1);
             storageRepository.save(newStorage);
             return true;
@@ -234,12 +217,11 @@ public class StorageService implements IStorageService {
         try{
             Storage storage = storageRepository.findByChoose(choose);
             if(storage != null){
-                return storage;
+                return migrateLegacyCredentials(storage);
             }
-        }catch(NoSuchElementException e){
-            e.printStackTrace();
         }catch(Exception e){
-            e.printStackTrace();
+            log.error("Failed to load selected storage or migrate credentials", e);
+            throw new IllegalStateException("Failed to load selected storage or migrate credentials", e);
         }
         return null;
     }
@@ -247,6 +229,7 @@ public class StorageService implements IStorageService {
     @Override
     public boolean update(Storage storage) {
         try{
+            encryptCredentials(storage);
             storageRepository.save(storage);
             return true;
         }catch(NoSuchElementException e){
@@ -270,6 +253,67 @@ public class StorageService implements IStorageService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private void encryptCredentials(Storage storage) throws GeneralSecurityException {
+        storage.storedBlobaccesskey(
+                AesGcmUtil.encryptIfNeeded(storage.storedBlobaccesskey()));
+        storage.storedBlobsecretkey(
+                AesGcmUtil.encryptIfNeeded(storage.storedBlobsecretkey()));
+    }
+
+    private Storage migrateLegacyCredentials(Storage storage) throws GeneralSecurityException {
+        if (storage == null) {
+            return null;
+        }
+        String oldAccessKey = storage.storedBlobaccesskey();
+        String oldSecretKey = storage.storedBlobsecretkey();
+        String encryptedAccessKey = AesGcmUtil.encryptIfNeeded(oldAccessKey);
+        String encryptedSecretKey = AesGcmUtil.encryptIfNeeded(oldSecretKey);
+        boolean changed = !equals(oldAccessKey, encryptedAccessKey)
+                || !equals(oldSecretKey, encryptedSecretKey);
+        if (changed) {
+            storage.storedBlobaccesskey(encryptedAccessKey);
+            storage.storedBlobsecretkey(encryptedSecretKey);
+            storageRepository.save(storage);
+        }
+        return storage;
+    }
+
+    private void migrateLegacyCredentials(List<Storage> storages) throws GeneralSecurityException {
+        if (storages == null) {
+            return;
+        }
+        for (Storage storage : storages) {
+            migrateLegacyCredentials(storage);
+        }
+    }
+
+    private boolean equals(String first, String second) {
+        return first == null ? second == null : first.equals(second);
+    }
+
+    private long countByAccessKey(List<Storage> storages, String accessKey) {
+        long count = 0;
+        if (storages != null) {
+            for (Storage storage : storages) {
+                if (equals(storage.getBlobaccesskey(), accessKey)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private Storage findByAccessKey(List<Storage> storages, String accessKey) {
+        if (storages != null) {
+            for (Storage storage : storages) {
+                if (equals(storage.getBlobaccesskey(), accessKey)) {
+                    return storage;
+                }
+            }
+        }
+        return null;
     }
 
 }

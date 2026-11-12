@@ -1,6 +1,9 @@
 package com.m2m.management.entity;
 
+import com.m2m.management.utils.AesGcmUtil;
+
 import javax.persistence.*;
+import java.security.GeneralSecurityException;
 
 @Entity
 @Table(name = "serveremail", schema = "g_apprepo")
@@ -106,10 +109,29 @@ public class ServerEmail implements java.io.Serializable {
     }
 
     public String getPassword() {
-        return password;
+        if (password == null || password.isEmpty()) {
+            return password;
+        }
+        try {
+            return AesGcmUtil.decrypt(password);
+        } catch (GeneralSecurityException | IllegalArgumentException e) {
+            throw new IllegalStateException("Stored email password cannot be decrypted", e);
+        }
     }
 
     public void setPassword(String password) {
+        try {
+            this.password = AesGcmUtil.encryptIfNeeded(password);
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Email password could not be encrypted", e);
+        }
+    }
+
+    public String storedPassword() {
+        return password;
+    }
+
+    public void storedPassword(String password) {
         this.password = password;
     }
 
