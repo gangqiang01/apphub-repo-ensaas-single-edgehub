@@ -20,8 +20,10 @@ public class Storage implements java.io.Serializable {
 
     private String blobbucket;
 
+    @Column(length = 1024)
     private String blobaccesskey;
 
+    @Column(length = 1024)
     private String blobsecretkey;
 
     private String type;

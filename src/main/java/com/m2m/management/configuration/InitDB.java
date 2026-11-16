@@ -2,6 +2,7 @@ package com.m2m.management.configuration;
 
 import com.m2m.management.entity.ProductImage;
 import com.m2m.management.entity.ServerEmail;
+import com.m2m.management.entity.Storage;
 import com.m2m.management.restful.SsoService;
 
 import com.m2m.management.service.IProductImageService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -47,8 +49,16 @@ public class InitDB implements ApplicationRunner {
     @Autowired
     private IStorageService storageService;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        jdbcTemplate.execute("ALTER TABLE g_apprepo.storage "
+                + "ALTER COLUMN blobaccesskey TYPE varchar(1024), "
+                + "ALTER COLUMN blobsecretkey TYPE varchar(1024)");
+        log.info("Ensured storage credential columns are varchar(1024)");
+
         String base64 = "data:image/png;base64,";
         ServerEmail se= null;
         storageService.getAll();
@@ -83,12 +93,20 @@ public class InitDB implements ApplicationRunner {
                 se = new ServerEmail();
                 se.setCemailserver(cemailserver);
                 se.setUsername(emailname);
-                se.setPassword(AesGcmUtil.encryptIfNeeded(password));
+                String encryptedPassword = AesGcmUtil.encryptIfNeeded(password);
+                if (StringUtils.hasText(password)) {
+                    String decryptedPassword = AesGcmUtil.decrypt(encryptedPassword);
+                    if (!password.equals(decryptedPassword)) {
+                        throw new IllegalStateException("AES-GCM password round-trip verification failed");
+                    }
+                    log.info("AES-GCM server email password encryption/decryption verified successfully");
+                }
+                se.setPassword(encryptedPassword);
                 se.setType(type);
                 serverEmailService.add(se);
             }
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("Failed to initialize server email configuration", e);
         }
 
 
