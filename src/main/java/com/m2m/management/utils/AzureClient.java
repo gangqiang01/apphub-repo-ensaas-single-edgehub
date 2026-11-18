@@ -14,7 +14,7 @@ public class AzureClient {
     private AzureClient(String connectionString,String containername){
 
         try {
-            System.out.println(connectionString);
+            // Never log the full connection string: it contains the Azure AccountKey.
             CloudStorageAccount storageAccount = CloudStorageAccount.parse(connectionString);
             CloudBlobClient serviceClient = storageAccount.createCloudBlobClient();
 

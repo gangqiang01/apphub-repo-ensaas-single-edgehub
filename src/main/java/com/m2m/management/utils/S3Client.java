@@ -114,7 +114,8 @@ public class S3Client {
         bucketName = containername;
         isS3 = false;
         try {
-            System.out.println("connectionString:"+ connectionString);
+            log.info("Initializing Azure blob client: container={}, connectionString={}",
+                    containername, mask(connectionString));
             CloudStorageAccount storageAccount = CloudStorageAccount.parse(connectionString);
             serviceClient = storageAccount.createCloudBlobClient();
 
@@ -158,14 +159,13 @@ public class S3Client {
         }
         User user = users.get(0);
         Storage storage = user.getStorage();
-        System.out.println(
-                String.format("endpoint:%s##accesskey:%s##secretkey:%s##container:%s",
-                        storage.getBloburl(), storage.getBlobaccesskey(), storage.getBlobsecretkey(), storage.getBlobbucket()));
 
         String burl = storage.getBloburl();
         String accesskey = storage.getBlobaccesskey();
         String secretkey = storage.getBlobsecretkey();
         String bucketname = storage.getBlobbucket();
+        log.info("Initializing storage client from system user: endpoint={}, container={}, accessKey={}, secretKey={}",
+                burl, bucketname, mask(accesskey), mask(secretkey));
         if(burl.equals(AZURE)){
             if(StringUtils.isNullOrEmpty(accesskey)
                     ||StringUtils.isNullOrEmpty(bucketname)){
@@ -184,14 +184,12 @@ public class S3Client {
     }
 
     public static S3Client getInstance(Storage storage) {
-        System.out.println(
-                String.format("endpoint:%s##accesskey:%s##secretkey:%s##container:%s",
-                        storage.getBloburl(), storage.getBlobaccesskey(), storage.getBlobsecretkey(), storage.getBlobbucket()));
-
         String burl = storage.getBloburl();
         String accesskey = storage.getBlobaccesskey();
         String secretkey = storage.getBlobsecretkey();
         String bucketname = storage.getBlobbucket();
+        log.info("Initializing storage client: endpoint={}, container={}, accessKey={}, secretKey={}",
+                burl, bucketname, mask(accesskey), mask(secretkey));
         if(burl.equals(AZURE)){
             if(StringUtils.isNullOrEmpty(accesskey)
                     ||StringUtils.isNullOrEmpty(bucketname)){
@@ -211,6 +209,22 @@ public class S3Client {
 
     public static void clearInstance(){
         instance = null;
+    }
+
+    /**
+     * Masks a credential for safe logging: never prints the full value.
+     * Keeps only the last 4 characters and the length so that mismatches
+     * (rotated keys, trailing whitespace, double encryption) can still be spotted.
+     */
+    private static String mask(String value) {
+        if (value == null || value.isEmpty()) {
+            return "<empty>";
+        }
+        int length = value.length();
+        if (length <= 4) {
+            return "****(len=" + length + ")";
+        }
+        return "****" + value.substring(length - 4) + "(len=" + length + ")";
     }
 
     public boolean createBucket() {
